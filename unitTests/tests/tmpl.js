@@ -120,3 +120,18 @@ test("Core :: If with else if statement", function() {
 
 	strictEqual(result, 'moo was there', "Output the correct text");
 });
+
+test("Core :: Test creating template instance", function() {
+	var tmpl = new Tmpl(),
+		tmplInstance = tmpl.template('{{var test = "moo"}}{{if test === "foo"}}foo was there{{else test === "moo"}}moo was there{{/if}}');
+
+	var result = tmplInstance.render({
+		name: 'Test',
+		details: {
+			age : 12,
+			time: 'four'
+		}
+	});
+
+	strictEqual(result, 'moo was there', "Output the correct text");
+});
