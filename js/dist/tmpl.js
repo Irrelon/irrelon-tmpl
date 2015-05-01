@@ -23,7 +23,7 @@ Core.prototype.code = function (html) {
 		code = 'with(obj) { var r=[];\n',
 		cursor = 0,
 		match;
-debugger;
+
 	while((match = re.exec(html))) {
 		code = this._codeAdd(code, html.slice(cursor, match.index));
 		code = this._codeAdd(code, match[1], true);
@@ -45,11 +45,23 @@ Core.prototype._codeAdd = function(code, line, js) {
 	if (js) {
 		// Check various code starts
 		if (line.match(reExpCode)) {
-			code += line + '\n';
+			if (line.substr(0, 5) === 'case ') {
+				code += line + ':\n';
+			} else {
+				code += line + ';\n';
+			}
 		} else if ((match = reExpConditionStart.exec(line))) {
 			// Transform the JS code so it is correct
 			// by wrapping it in brackets after the command
-			code += match[3] + ' (' + match[4] + ') {'+ '\n';
+			if (match[3] === 'else') {
+				if (match[4] === undefined) {
+					code += '} ' + match[3] + ' {' + '\n';
+				} else {
+					code += '} ' + match[3] + ' if (' + match[4] + ') {' + '\n';
+				}
+			} else {
+				code += match[3] + ' (' + match[4] + ') {' + '\n';
+			}
 		} else if ((match = reExpConditionEnd.exec(line))) {
 			code += '}'+ '\n';
 		} else {
