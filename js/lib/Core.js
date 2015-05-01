@@ -1,3 +1,5 @@
+var Template = require('./Template');
+
 var Core = function (html, data) {
 	if (html !== undefined) {
 		if (data !== undefined) {
@@ -80,12 +82,12 @@ Core.prototype._codeAdd = function(code, line, js) {
 	return code;
 };
 
-Core.prototype.render = function (html, data) {
+Core.prototype.parse = function (html) {
 	var code = this.code(html),
 		result;
 
 	try {
-		result = new Function('obj', code).apply(data, [data]);
+		result = new Function('obj', code);
 	} catch(err) {
 		throw("'" + err.message + "'" + " in \n\nCode:\n" + code + "\n");
 	}
@@ -93,8 +95,21 @@ Core.prototype.render = function (html, data) {
 	return result;
 };
 
-Core.prototype.template = function (html) {
+Core.prototype.render = function (html, data) {
+	var meth = this.parse(html),
+		result;
 
+	try {
+		result = meth.apply(data, [data]);
+	} catch(err) {
+		throw(err.message);
+	}
+
+	return result;
+};
+
+Core.prototype.template = function (html) {
+	return new Template(this, html);
 };
 
 module.exports = Core;
