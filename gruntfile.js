@@ -21,18 +21,24 @@ module.exports = function(grunt) {
 		},
 
 		qunit: {
-			"irrelon-tmpl": {
+			"irrelon-tmpl-source": {
 				"src": [
-					"unitTests/index.html"
+					"unitTests/source.html"
+				]
+			},
+
+			"irrelon-tmpl-minified": {
+				"src": [
+					"unitTests/minified.html"
 				]
 			}
 		},
 
 		"qunit_blanket_lcov": {
 			"lib": {
-				"src": "js/unitTests/lib/fdb-all.js",
+				"src": "js/unitTests/lib/irrelon-tmpl.js",
 				"options": {
-					"dest": "coverage/fdb-all.lcov",
+					"dest": "coverage/irrelon-tmpl.lcov",
 					force: true
 				}
 			}
@@ -41,13 +47,21 @@ module.exports = function(grunt) {
 		"browserify": {
 			"all": {
 				src: ["./js/builds/all.js"],
-				dest: "./js/dist/tmpl.js",
+				dest: "./js/dist/irrelon-tmpl.js",
 				options: {
 					verbose: true,
 					debug: true,
 					plugin: [
 						["browserify-derequire"]
 					]
+				}
+			}
+		},
+
+		"uglify": {
+			"all": {
+				"files": {
+					"./js/dist/irrelon-tmpl.min.js": ["./js/dist/irrelon-tmpl.js"]
 				}
 			}
 		}
