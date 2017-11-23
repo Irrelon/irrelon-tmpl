@@ -45,9 +45,9 @@ module.exports = function(grunt) {
 		},
 
 		"browserify": {
-			"all": {
-				src: ["./js/builds/all.js"],
-				dest: "./js/dist/irrelon-tmpl.js",
+			"core": {
+				src: ["./js/builds/core.js"],
+				dest: "./js/dist/irrelon-tmpl-core.js",
 				options: {
 					verbose: true,
 					debug: true,
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 		"uglify": {
 			"all": {
 				"files": {
-					"./js/dist/irrelon-tmpl.min.js": ["./js/dist/irrelon-tmpl.js"]
+					"./js/dist/irrelon-tmpl-core.min.js": ["./js/dist/irrelon-tmpl-core.js"]
 				}
 			}
 		}
