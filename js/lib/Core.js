@@ -1,6 +1,8 @@
 var Template = require('./Template');
 
 var Core = function (html, data) {
+	this._linkedViews = {};
+
 	if (html !== undefined) {
 		if (data !== undefined) {
 			// Return a rendered template
@@ -10,6 +12,8 @@ var Core = function (html, data) {
 		return this.template(html);
 	}
 };
+
+Core.prototype.custom = {};
 
 Core.prototype.code = function (html) {
 	var re = /{{([^}}]+)?}}/g,
@@ -25,6 +29,7 @@ Core.prototype.code = function (html) {
 
 	code = this._codeAdd(code, html.substr(cursor, html.length - cursor));
 	code = (code + 'return r.join(""); }').replace(/[\r\t\n]/g, '');
+	
 
 	return code;
 };
@@ -33,6 +38,8 @@ Core.prototype._codeAdd = function(code, line, js) {
 	var reExpCode = /(^( )?(var|case|break|{|}|;))(.*)?/g,
 		reExpConditionStart = /(^( )?(if|for|else|switch|{|}|;))(.*)?/g,
 		reExpConditionEnd = /(^\/(if|for|else|switch|{|}|;))(.*)?/g,
+		reExpCustomStart = /(^( )?(repeat|random|;))(.*)?/g,
+		reExpCustomEnd = /(^\/(repeat|random|;))(.*)?/g,
 		match;
 
 	if (js) {
@@ -57,6 +64,12 @@ Core.prototype._codeAdd = function(code, line, js) {
 			}
 		} else if ((match = reExpConditionEnd.exec(line))) {
 			code += '}'+ '\n';
+		} else if ((match = reExpCustomStart.exec(line))) {
+			// Transform the JS code so it is correct
+			// by wrapping it in brackets after the command
+			code += this.custom[match[3]].start(match);
+		} else if ((match = reExpCustomEnd.exec(line))) {
+			code += this.custom[match[2]].end(match);
 		} else {
 			if (line.substr(0, 1) === ':') {
 				// Output directly without escaping etc
@@ -104,12 +117,27 @@ Core.prototype.render = function (html, data) {
 	} catch(err) {
 		throw(err.message);
 	}
+	
+	result = result.replace(/,]/g, ']');
+	result = result.replace(/,}/g, '}');
 
 	return result;
 };
 
 Core.prototype.template = function (html) {
 	return new Template(this, html);
+};
+
+Core.prototype.updateProperty = function (obj, prop, newVal) {
+	// Get linked views for this object
+	var viewArr = this._linkedViews[obj],
+		i;
+
+	if (viewArr && viewArr.length) {
+		for (i = 0; i < viewArr.length; i++) {
+			viewArr[i].updateProperty(obj, prop, newVal);
+		}
+	}
 };
 
 module.exports = Core;
