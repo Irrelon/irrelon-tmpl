@@ -1,0 +1,29 @@
+{
+  "name": "irrelon-tmpl",
+  "description": "A hyper-fast templating engine.",
+  "main": "./index",
+  "authors": [
+    "Rob Evans - Irrelon Software Limited"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "template",
+    "templating",
+    "engine",
+    "javascript",
+    "browser",
+    "node",
+    "data",
+    "binding",
+    "client-side",
+    "server-side"
+  ],
+  "homepage": "https://github.com/Irrelon/irrelon-tmpl",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
